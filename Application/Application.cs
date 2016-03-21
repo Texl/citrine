@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Drawing;
+using System.Linq;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
@@ -15,21 +17,27 @@ namespace Citrine.Application
                 {
                     game.VSync = VSyncMode.On;
 
-                    const int size = 256;
+                    var width = game.Width;
+                    var height = game.Height;
 
-                    var texData = new byte[size * size];
-
-                    for (var i = 0; i < size * size; ++i)
-                    { 
-                        texData[i] = 255;
-                    }
+                    var colorData = Enumerable.Repeat(Color.Black, height).Select(c => Enumerable.Repeat(c, width).ToArray()).ToArray();
 
                     Func<int, int> random = new Random().Next;
 
-                    for (var i = 0; i < 10; ++i)
+                    for (var column = 0; column < width; ++column)
                     {
-                        texData[random(size) * size + random(size)] = 0;
+                        for (var row = 0; row < height; ++row)
+                        {
+                            var red = column * 255 / width;
+                            var green = row * 255 / height;
+                            var blue = random(Math.Max(red, green));
+                            colorData[row][column] = Color.FromArgb(red, green, blue);
+                        }
                     }
+
+                    Func<Color, byte[]> colorToByteArray = color => new[] {color.R, color.G, color.B, color.A};
+
+                    var texData = colorData.Select(row => row.Select(color => colorToByteArray(color)).SelectMany(x => x).ToArray()).SelectMany(x => x).ToArray();
 
                     TextureId = GL.GenTexture();
                     GL.BindTexture(TextureTarget.Texture2D, TextureId);
@@ -37,12 +45,13 @@ namespace Citrine.Application
                     GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)All.Linear);
                     GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureParameterName.ClampToEdge);
                     GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureParameterName.ClampToEdge);
-                    GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Luminance8, size, size, 0, PixelFormat.Luminance, PixelType.UnsignedByte, texData);
+                    GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, width, height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, texData);
+
                     var errorCode = GL.GetError();
 
                     if (errorCode != ErrorCode.NoError)
                     {
-                        game.Exit();
+                        throw new InvalidOperationException("OpenGL error.");
                     }
                 };
 
