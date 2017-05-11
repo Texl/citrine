@@ -21,13 +21,14 @@ namespace Citrine.Application
         {
             VSync = VSyncMode.On;
             TextureId = GL.GenTexture();
-            GenerateTexture(TextureId, Width, Height, Random, GetImage);
+
+            Console.WriteLine(Timer.TimeAction(() => GenerateTexture(TextureId, Width, Height, Random, GetImage)));
         }
 
         protected override void OnResize(EventArgs e)
         {
             GL.Viewport(0, 0, Width, Height);
-            GenerateTexture(TextureId, Width, Height, Random, GetImage);
+            Console.WriteLine(Timer.TimeAction(() => GenerateTexture(TextureId, Width, Height, Random, GetImage)));
         }
 
         protected override void OnUpdateFrame(FrameEventArgs e)
@@ -73,15 +74,22 @@ namespace Citrine.Application
 
         private static void GenerateTexture(int textureId, int width, int height, Func<int, int> random, Func<int, int, Func<int, int>, Color[][]> getImage)
         {
-            var texData =
-                getImage(width, height, random)
-                    .Select(row =>
-                        row
-                            .Select(color => color.AsByteArray())
-                            .SelectMany(x => x)
-                            .ToArray())
-                    .SelectMany(x => x)
-                    .ToArray();
+            var image = getImage(width, height, random);
+
+            var texData = new byte[width * height * Color.ByteSize];
+
+            for (var rowIndex = 0; rowIndex < height; ++rowIndex)
+            {
+                for (var colIndex = 0; colIndex < width; ++colIndex)
+                {
+                    var color = image[rowIndex][colIndex].AsByteArray();
+
+                    for (var byteIndex = 0; byteIndex < Color.ByteSize; ++byteIndex)
+                    {
+                        texData[(rowIndex * width + colIndex) * Color.ByteSize + byteIndex] = color[byteIndex];
+                    }
+                }
+            }
 
             GL.BindTexture(TextureTarget.Texture2D, textureId);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)All.Linear);

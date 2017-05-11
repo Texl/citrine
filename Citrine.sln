@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Citrine.Application", "Citr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Citrine.Core", "Citrine.Core\Citrine.Core.csproj", "{DD4189DE-606B-41FC-9921-139A0BCDAB83}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Citrine.Scene", "Citrine.Scene\Citrine.Scene.csproj", "{7E84AB5A-DAFC-4AE9-9924-AA06CED8AA14}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{DD4189DE-606B-41FC-9921-139A0BCDAB83}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DD4189DE-606B-41FC-9921-139A0BCDAB83}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DD4189DE-606B-41FC-9921-139A0BCDAB83}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7E84AB5A-DAFC-4AE9-9924-AA06CED8AA14}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E84AB5A-DAFC-4AE9-9924-AA06CED8AA14}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7E84AB5A-DAFC-4AE9-9924-AA06CED8AA14}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7E84AB5A-DAFC-4AE9-9924-AA06CED8AA14}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

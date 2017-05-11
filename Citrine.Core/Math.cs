@@ -1,4 +1,5 @@
 ﻿using System;
+using OpenTK;
 
 namespace Citrine.Core
 {
@@ -15,5 +16,29 @@ namespace Citrine.Core
 
         public static decimal Clamp01(this decimal value) =>
             value < 0 ? 0 : value > 1 ? 1 : value;
+
+        public static Vector3d Pow(this Vector3d vector, double power) =>
+            new Vector3d(
+                System.Math.Pow(vector.X, power),
+                System.Math.Pow(vector.Y, power),
+                System.Math.Pow(vector.Z, power));
+
+        public sealed class Ray
+        {
+            private Ray(Vector3d origin, Vector3d direction)
+            {
+                Origin = origin;
+                Direction = direction;
+            }
+
+            public static Ray Build(Vector3d origin, Vector3d direction) =>
+                new Ray(origin, direction.Normalized());
+
+            public Vector3d Evaluate(double t) =>
+                Origin + Direction * t;
+
+            public readonly Vector3d Origin;
+            public readonly Vector3d Direction;
+        }
     }
 }
