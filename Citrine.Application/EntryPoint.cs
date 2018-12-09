@@ -8,7 +8,7 @@ namespace Citrine.Application
         [STAThread]
         public static void Main()
         {
-            using (var application = new Application("citrine", Scene2.BuildScene().RenderScene))
+            using (var application = new Application("citrine", Scene3.RenderScene, 64984))
             {
                 application.Run();
             }

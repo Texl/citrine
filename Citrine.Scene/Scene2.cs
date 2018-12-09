@@ -24,7 +24,7 @@ namespace Citrine.Scene
 
             Vector3d GetColorAtRay(Math.Ray ray)
             {
-                (var intersection, var normal) = GetIntersection(ray, 1000.0);
+                var (intersection, normal) = GetIntersection(ray, 1000.0);
 
                 if (intersection.Item2 < 0.0)
                 {
@@ -61,12 +61,17 @@ namespace Citrine.Scene
             RenderScene =
                 (width, height, random) =>
                     Enumerable.Range(0, height)
-                        .Select(y => Enumerable.Range(0, width)
-                            .Select(x => new Vector2(x, y))
-                            .AsParallel()
-                            .AsOrdered()
-                            .Select(pixel => GetColorAtPixel(pixel, new Vector2(width, height)))
-                            .ToArray())
+                        .Select(y =>
+                            Enumerable.Range(0, width)
+                                .Select(x =>
+                                    new Vector2(x, y))
+                                //.AsParallel()
+                                //.AsOrdered()
+                                .Select(pixel =>
+                                    GetColorAtPixel(
+                                        pixel,
+                                        new Vector2(width, height)))
+                                .ToArray())
                         .ToArray();
         }
 

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using Citrine.Core;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
@@ -9,26 +8,28 @@ namespace Citrine.Application
 {
     public class Application : GameWindow
     {
-        public Application(
-            string title,
-            Func<int, int, Func<int, int>, Color[][]> getImage)
+        public delegate Color[][] DGetImage(int width, int height, Func<int, int> random);
+
+        public Application(string title, DGetImage getImage, int randomSeed)
         {
             Title = title;
             GetImage = getImage;
+            RandomSeed = randomSeed;
+
+            WindowBorder = WindowBorder.Fixed;
         }
 
         protected override void OnLoad(EventArgs e)
         {
             VSync = VSyncMode.On;
             TextureId = GL.GenTexture();
-
-            Console.WriteLine(Timer.TimeAction(() => GenerateTexture(TextureId, Width, Height, Random, GetImage)));
         }
 
         protected override void OnResize(EventArgs e)
         {
             GL.Viewport(0, 0, Width, Height);
-            Console.WriteLine(Timer.TimeAction(() => GenerateTexture(TextureId, Width, Height, Random, GetImage)));
+            Func<int, int> random = new Random(RandomSeed).Next;
+            Console.WriteLine(Timer.TimeAction(() => GenerateTexture(TextureId, Width, Height, random, GetImage)));
         }
 
         protected override void OnUpdateFrame(FrameEventArgs e)
@@ -69,10 +70,10 @@ namespace Citrine.Application
         }
 
         private int TextureId;
-        private readonly Func<int, int, Func<int, int>, Color[][]> GetImage;
-        private readonly Func<int, int> Random = new Random().Next;
+        private readonly DGetImage GetImage;
+        private readonly int RandomSeed;
 
-        private static void GenerateTexture(int textureId, int width, int height, Func<int, int> random, Func<int, int, Func<int, int>, Color[][]> getImage)
+        private static void GenerateTexture(int textureId, int width, int height, Func<int, int> random, DGetImage getImage)
         {
             var image = getImage(width, height, random);
 
